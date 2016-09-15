@@ -503,12 +503,10 @@ departing arrive `"on time"`?
 [NUMERIC INPUT]
 
 ```{r on-time-arr-perc}
-# type your code for Question 9 here, and Knit
+# type your code for Question 10 here, and Knit
 nycflights <- nycflights %>%
   mutate(arr_type = ifelse(arr_delay<=0, "on time", "delayed"))
-nycflights <- nycflights %>%
-  mutate(dep_type = ifelse(dep_delay<5, "on time", "delayed"))
 nycflights %>%
-  summarize(ratio=sum(dep_type=="delayed"&arr_type=="on time")/n())
+  summarize(ratio=sum(dep_type=="delayed" & arr_type=="on time")/sum(dep_type=="delayed"))
           
 ```
