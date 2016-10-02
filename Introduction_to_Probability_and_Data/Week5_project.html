@@ -165,7 +165,7 @@ $(document).ready(function () {
 <div id="part-1-data" class="section level2">
 <h2>Part 1: Data</h2>
 <p>According to its documentation, the Behavioral Risk Factor Surveillance System (BRFSS) contains data that is designed to measure behavioral risk factors for the non-instituionalized adult (older than 18) residing in the US teritories. The data was collected by both landline telephone and cellphone based surveys, and all interviewers were randomly selected.</p>
-<p>The study can be categorized as a random sampling observational study. Therefore, it will be difficult to draw causal conclusions based on the datasets since there is no experiments involved. However, it can be generalized to the US population since the data was collected using random sampling.</p>
+<p>The study can be categorized as a random sampling observational study. Therefore, it will be difficult to draw causal conclusions based on the datasets since there is no random assignments or any experiments involved. However, it can be generalized to the US population since the data was collected using random sampling.</p>
 <hr />
 </div>
 <div id="part-2-research-questions" class="section level2">
@@ -179,7 +179,7 @@ $(document).ready(function () {
 <h2>Part 3: Exploratory data analysis</h2>
 <div id="research-question-1" class="section level3">
 <h3>Research question 1:</h3>
-<p>In this exploratory analysis, we would like to understand how successful people are in quitting their smoking habits. To perform this analysis, we target on the group who have smoked more than 100 cigarettes in their entire lifetime, and who have decided to quit smoking in the past twelve months. We then compare their current smoking habits with the group who have not decided to quit smoking to gain some insights into their success in quitting smoking.</p>
+<p>In this exploratory analysis, I would like to understand how successful people are in quitting their smoking habits. In particular, I would like to know if people tend to smoke less after they decided to quit smoking. To perform this analysis, we target on the group who have smoked more than 100 cigarettes in their entire lifetime, and who have decided to quit smoking in the past twelve months. We then compare their current smoking habits with the group who have not decided to quit smoking to gain some insights into their success in quitting smoking.</p>
 <p>Three variables are used for this study:</p>
 <ul>
 <li><strong>smoke100</strong>: Smoked At Least 100 Cigarettes
@@ -231,7 +231,7 @@ g_df1[, <span class="kw">c</span>(<span class="st">&quot;stopsmk2&quot;</span>, 
 </div>
 <div id="research-question-2" class="section level3">
 <h3>Research question 2</h3>
-<p>In this study, we would like to find the correlation between people’s income levels and their fruit/vegetable intake frequency. Three variables are chosen for this analysis:</p>
+<p>There is much interests in promoting more fruits and vegetables consumption in America as a healthy dietary habits. In this study, I would like to explore whether there is a correlation between people’s income levels and their fruit/vegetable intake frequency. Three variables are chosen for this analysis:</p>
 <ul>
 <li><strong>_incomg</strong>: Computed Income Categories<br />
 </li>
@@ -269,7 +269,7 @@ df2 =<span class="st"> </span>df2[<span class="kw">complete.cases</span>(df2), ]
 </div>
 <div id="research-quesion-3" class="section level3">
 <h3>Research quesion 3:</h3>
-<p>In this study, we would like to explore the correlation between people’s smoking habits and their physical activity levels. We would also like to know if there is any gender difference involved.</p>
+<p>There is a common conception that people who do not smoke tends to have a more healthy lifestyle and would engage in more physical activities. In this study, we would like to explore the correlation between people’s smoking habits and their physical activity levels. We would also like to know if there is any gender difference involved.</p>
 <p>Three variables are chosen:</p>
 <ul>
 <li><strong>sex</strong>: people’s gender</li>

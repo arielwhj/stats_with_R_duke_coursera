@@ -142,7 +142,7 @@ First let's look at the fruit_intake boxplot. It seems that the **median** value
 For the vegetable intake, the **median** value shows an increasing trend with income level and also a tighter distribution (smaller IQR) with increasing income level. This result indicates that people in the higher income group tends to eat more vegetables.
 
 ### Research quesion 3:
-There is a common conception that people who do not smoke tends to have a more healthy lifestyle and would engaging in more physical activities. In this study, we would like to explore the correlation between people's smoking habits and their physical activity levels. We would also like to know if there is any gender difference involved.
+There is a common conception that people who do not smoke tends to have a more healthy lifestyle and would engage in more physical activities. In this study, we would like to explore the correlation between people's smoking habits and their physical activity levels. We would also like to know if there is any gender difference involved.
 
 Three variables are chosen:
 
