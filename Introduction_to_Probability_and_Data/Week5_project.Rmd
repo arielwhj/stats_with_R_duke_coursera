@@ -1,0 +1,178 @@
+---
+title: "Exploring the BRFSS data"
+output: 
+  html_document: 
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+## Setup
+
+### Load packages
+
+```{r load-packages, message = FALSE}
+library(ggplot2)
+library(dplyr)
+```
+
+### Load data
+
+```{r load-data}
+library(ggplot2)
+library(dplyr)
+load("brfss2013.RData")
+```
+
+
+
+* * *
+
+## Part 1: Data
+According to its documentation, the Behavioral Risk Factor Surveillance System (BRFSS) contains data that is designed to measure behavioral risk factors for the non-instituionalized adult (older than 18) residing in the US teritories. The data was collected by both landline telephone and cellphone based surveys, and all interviewers were randomly selected.
+
+The study can be categorized as a random sampling observational study. Therefore, it will be difficult to draw causal conclusions based on the datasets since there is no experiments involved. However, it can be generalized to the US population since the data was collected using random sampling.
+
+
+
+* * *
+
+## Part 2: Research questions
+
+**Research quesion 1:**
+How successful are smokers in quitting their smoking habits?
+
+**Research quesion 2:**
+Is there any correlation between people's income level and their dietary habits in terms of fruit and vegetable intake?
+
+**Research quesion 3:**
+Is there any correlation between people's smoking habits and their level of physical activities? Is there any gender difference as well?
+
+* * *
+
+## Part 3: Exploratory data analysis
+
+### Research question 1:
+
+In this exploratory analysis, we would like to understand how successful people are in quitting their smoking habits. To perform this analysis, we target on the group who have smoked more than 100 cigarettes in their entire lifetime, and who have decided to quit smoking in the past twelve months. We then compare their current smoking habits with the group who have not decided to quit smoking to gain some insights into their success in quitting smoking.
+
+Three variables are used for this study:  
+
+* **smoke100**: Smoked At Least 100 Cigarettes  
+    + Have you smoked at least 100 cigarettes in your entire life? [Note: 5 packs = 100 cigarettes]
+* **stopsmk2**: Stopped Smoking In Past 12 Months
+    + During the past 12 months, have you stopped smoking for one day or longer because you were trying to quit smoking?
+* **smokday2**: Frequency Of Days Now Smoking
+    + Do you now smoke cigarettes every day, some days, or not at all?
+
+Let create a subset of the data and remove all NA values.
+
+```{r}
+df1 = brfss2013[, c("smoke100", "stopsmk2", "smokday2")]
+df1 = df1[complete.cases(df1) & df1$smoke100=="Yes", ] # targeting people who have smoked more than 100 cigarettes
+summary(df1)
+
+```
+From the summary statistics, it is interesting to see that the count of `Not at all` category in the `smokday2` variable is zero. This indicates that no one has completed quitted smoking. Let's group our data by `stopsmk2` and `smokday2` and calculate the total count for each group
+
+
+```{r}
+g_df1 <- df1 %>%
+    group_by(stopsmk2, smokday2) %>%  # group data
+    summarise(ct=n()) %>%     # calcualte total count for each group
+    mutate(freq=ct/sum(ct)) %>%   # calculate percentage frequency for each group
+    mutate(pos=(cumsum(freq) - 0.5 * freq)) # calculate position for value labels for barcharts
+g_df1[, c("stopsmk2", "smokday2", "ct")]
+```
+
+We can visualize the above numeric results using a stacked barcharts
+```{r}
+ggplot(data=g_df1, aes(x=factor(stopsmk2), y=freq, fill=smokday2)) + 
+        geom_bar(stat="identity") + geom_text(aes(x = stopsmk2, y = pos, 
+                                                  label=paste0(sprintf("%.2f", 100*freq), "%")), size=4) +
+        labs(title = "How sucessful are people in quitting smoking", x = "Decided to quit in the past twelve month", y = "percentage(%)") + scale_fill_discrete(name="Frequency of days now smoking")
+
+```  
+
+
+From the above barplots, we can see that there is still **~63%** of people who smokes on a daily basis in the 'quit smoking' group. **None** of them quit smoking completely since rest of the people still smoke on "some days". 
+
+However, it is also noted that people who decided to quit smoking in the past twelve months has a smaller percentage in the category of "smoking every day" (~63%) compared to the people who did not decide to quit (~83%). 
+
+Without having access to data of people's smoking frequency **before** they decided to quit smoking, it is difficult to rate their success. However, the results seems to suggest that people who have decided to quit smoking tends to have a smaller portion of regular smoker than people never thought about quitting in the past twelve months. 
+
+
+### Research question 2
+In this study, we would like to find the correlation between people's income levels and their fruit/vegetable intake frequency. Three variables are chosen for this analysis:
+
+* **\_incomg**: Computed Income Categories  
+* **frutda1_** : Computed Fruit Intake in Times per day
+* **vegeda1_** : computed vegetable intake in times per day
+
+
+Let's first create a subset of data and remove all NA values
+
+```{r}
+df2 = brfss2013[, c("X_incomg", "ftjuda1_", "vegeda1_")]
+names(df2) = c("income", "fruit_intake", "vege_intake")
+df2 = df2[complete.cases(df2), ]
+summary(df2)
+```
+In this dataset,  we have 1 categorical variable(`income`) and two numerical variables(`fruit_intake` and `vege_intake`). To compare the distribution of different income group, we can use boxplot charts for data visualizations
+
+```{r}
+# Correlation between income level and daily fruit intake
+ggplot(aes(y = fruit_intake, x = income, fill=income), data = df2) + 
+           geom_boxplot() + theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+           coord_cartesian(ylim = c(-10, 150)) +
+           labs(title = "Income_level Vs. daily fruit intake", x = "Income_level", y = "Frequency") + 
+                scale_fill_discrete(name="Income_level")
+
+# Correlation between income level and daily vegetable intake
+ggplot(aes(y = vege_intake, x = income, fill=income), data = df2) + 
+           geom_boxplot() + theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+           coord_cartesian(ylim = c(-10, 200)) +
+           labs(title = "Income_level Vs. daily vegetable intake", x = "Income_level", y = "Frequency") + scale_fill_discrete(name="Income_level")
+
+```
+
+First let's look at the fruit_intake boxplot. It seems that the **median** value of daily fruit intake shows little variation between different income group. However, the **IQR** seems to be decrease with increasing income levels indicating the variation of people's fruit intake frequncy tends to be smaller in the higher income group.
+
+For the vegetable intake, the **median** value shows an increasing trend with income level and also a tighter distribution (smaller IQR) with increasing income level. This result indicates that people in the higher income group tends to eat more vegetables.
+
+### Research quesion 3:
+In this study, we would like to explore the correlation between people's smoking habits and their physical activity levels. We would also like to know if there is any gender difference involved.
+
+Three variables are chosen:
+
+* **sex**: people's gender
+* **\_rfsmok3**: current smoking calculated variable
+    + calculated variable for adults who are current smokers
+* **\_pacat1**: physical activity categories
+
+Let's first create a data subset and remove all NA values
+```{r}
+df3 = brfss2013[, c("sex", "X_rfsmok3", "X_pacat1")]
+df3 = df3[complete.cases(df3),]
+names(df3) = c("sex", "smoker", "activity_level")
+summary(df3)
+```
+
+All three variables are categorical. We will visualize the data using stacked barcharts
+
+```{r}
+g_df3 = df3 %>%
+        group_by(sex, smoker, activity_level) %>%
+        summarise(ct=n()) %>%     # calcualte total count for each group
+        mutate(freq=100*ct/sum(ct)) %>%   # calculate frequency for each group
+        mutate(pos=(cumsum(freq) - 0.5 * freq)) # calculate position for value labels
+```
+
+```{r}
+ggplot(data=g_df3, aes(x=factor(smoker), y=freq, fill=activity_level)) + geom_bar(stat='identity')+  
+      facet_wrap( ~ sex, ncol=2) +
+      geom_text(aes(x = smoker, y = pos, ymax = 15, label=paste0(sprintf("%.2f", freq), "%")), size=4) +
+      labs(title = "Smoking and Physical Activities", x = "Smoker?", y = "Percentage(%)") 
+```
+
+As we can see from the above barcharts, people who are categorized as `smoker` have a smaller percentage in the cateogries of `Highly active` and `Active` in the physical actities variable. Also, there is no siginicant difference in almost all categories between the male and female group. These results indicate that people who smokes tends to have a lower physical activity level than non-smokers across both gender groups.
