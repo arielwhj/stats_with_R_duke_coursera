@@ -31,7 +31,7 @@ load("brfss2013.RData")
 ## Part 1: Data
 According to its documentation, the Behavioral Risk Factor Surveillance System (BRFSS) contains data that is designed to measure behavioral risk factors for the non-instituionalized adult (older than 18) residing in the US teritories. The data was collected by both landline telephone and cellphone based surveys, and all interviewers were randomly selected.
 
-The study can be categorized as a random sampling observational study. Therefore, it will be difficult to draw causal conclusions based on the datasets since there is no experiments involved. However, it can be generalized to the US population since the data was collected using random sampling.
+The study can be categorized as a random sampling observational study. Therefore, it will be difficult to draw causal conclusions based on the datasets since there is no random assignments or any experiments involved. However, it can be generalized to the US population since the data was collected using random sampling.
 
 
 
@@ -54,7 +54,7 @@ Is there any correlation between people's smoking habits and their level of phys
 
 ### Research question 1:
 
-In this exploratory analysis, we would like to understand how successful people are in quitting their smoking habits. To perform this analysis, we target on the group who have smoked more than 100 cigarettes in their entire lifetime, and who have decided to quit smoking in the past twelve months. We then compare their current smoking habits with the group who have not decided to quit smoking to gain some insights into their success in quitting smoking.
+In this exploratory analysis, I would like to understand how successful people are in quitting their smoking habits. In particular, I would like to know if people tend to smoke less after they decided to quit smoking. To perform this analysis, we target on the group who have smoked more than 100 cigarettes in their entire lifetime, and who have decided to quit smoking in the past twelve months. We then compare their current smoking habits with the group who have not decided to quit smoking to gain some insights into their success in quitting smoking.
 
 Three variables are used for this study:  
 
@@ -103,7 +103,8 @@ Without having access to data of people's smoking frequency **before** they deci
 
 
 ### Research question 2
-In this study, we would like to find the correlation between people's income levels and their fruit/vegetable intake frequency. Three variables are chosen for this analysis:
+There is much interests in promoting more fruits and vegetables consumption in America as a healthy dietary habits. In this study, I would like to explore whether there is a correlation between people's income levels and their fruit/vegetable intake frequency.
+Three variables are chosen for this analysis:
 
 * **\_incomg**: Computed Income Categories  
 * **frutda1_** : Computed Fruit Intake in Times per day
@@ -141,7 +142,7 @@ First let's look at the fruit_intake boxplot. It seems that the **median** value
 For the vegetable intake, the **median** value shows an increasing trend with income level and also a tighter distribution (smaller IQR) with increasing income level. This result indicates that people in the higher income group tends to eat more vegetables.
 
 ### Research quesion 3:
-In this study, we would like to explore the correlation between people's smoking habits and their physical activity levels. We would also like to know if there is any gender difference involved.
+There is a common conception that people who do not smoke tends to have a more healthy lifestyle and would engaging in more physical activities. In this study, we would like to explore the correlation between people's smoking habits and their physical activity levels. We would also like to know if there is any gender difference involved.
 
 Three variables are chosen:
 
