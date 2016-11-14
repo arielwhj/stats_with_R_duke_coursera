@@ -1,0 +1,134 @@
+---
+title: "Statistical inference with the GSS data"
+output: 
+  html_document: 
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+## Setup
+
+### Load packages
+
+```{r load-packages, message = FALSE}
+library(ggplot2)
+library(dplyr)
+library(statsr)
+```
+
+### Load data
+
+```{r load-data}
+load("gss.Rdata")
+```
+
+
+
+* * *
+
+## Part 1: Data
+
+The dataset used for this project is from the extact of the General Social Survey ([GSS](http://gss.norc.org)) Cumulative File 1972-2012. According to the codebook, a random sampling strategy was used therefore we can generalize the results to the US population
+
+In addition, The study can be categorized as a random sampling observational study. Therefore, it will be difficult to draw causal conclusions based on the datasets since there is no random assignments or any experiments involved.
+
+## Part 2: Research question
+
+**Are older generations generally more opposed to homosexual sex relations than younger generations based on the dataset? **
+
+I am interested to test the general public conception that older generations are more conservative and more against homosexual sex relations
+
+* * *
+
+## Part 3: Exploratory data analysis
+
+
+* * *
+
+We will use two columns to build my hypothesis for the research question  
+
++ **age**
++ **homosexual**
+
+The levels of response for the question "What about sexual relations between two adults of the same sex?" is as follows
+
+```{r}
+levels(gss$homosex)
+```
+We will group people who answered either "Always Wrong" or "Almst Always Wrg" as people who are strongly against homosexual relations, and use the proportion **__p__** for the hypothesis test
+
+```{r}
+sub_df <- gss[, c("age", "homosex")]
+sub_df <- sub_df[complete.cases(sub_df), ] # remove NA values
+
+sub_df <- mutate(sub_df, against_homo=factor(ifelse(homosex=="Always Wrong" |homosex=="Almst Always Wrg", "yes", "No")))
+summary(sub_df)
+```
+I will group the people into two age group based on the median age value
+```{r}
+sub_df <- mutate(sub_df, age_group=factor(ifelse(age>median(age), "older", "younger")))
+summary(sub_df)
+```
+Group the data by people's age group
+
+```{r}
+older <- sub_df[sub_df$age_group=="older", ]
+younger <- sub_df[sub_df$age_group=="younger", ]
+```
+Construct a 95% confidence interval for the proportion of against-homo in the **older** generation
+
+```{r}
+inference(y = against_homo, data = older, statistic = "proportion", type = "ci", method = "theoretical", success = "yes")
+```  
+
+Next construct the 95% confidence interval for the proportion of against-homo in the **younger** generation
+```{r}
+inference(y = against_homo, data = younger, statistic = "proportion", type = "ci", method = "theoretical", success = "yes")
+```
+
+
+## Part 4: Inference
+
+For this research question, we would like to make conclusions about the difference in the two population proportions. We will construct our hypothesis as follows:
+$$H_0: p_{old} - p_{young} = 0$$
+$$H_0: p_{old} - p_{young} >0$$
+where p is the proportion of people who are against homosexual sex relations. 
+Let's start by check the conditions for using the normal model to analyse the result. 
+
+- The sample observations are independent
+    * A random sampling was used and sample size is smaller than 10% of the population 
+- success-failure condition
+    * First calculate the pooled proportion of people who are against homosexual
+    ```{r}
+    stats <- sub_df %>%
+      group_by(against_homo) %>%
+        summarise(ct=n()) %>%
+          mutate(percentage=ct/sum(ct))
+    pool <- stats[stats$against_homo=="yes", ]$percentage
+    ```
+    * Then check if expected success/failure count is larger than 10
+    ```{r}
+    total <- count(sub_df)
+    success <- pool*total
+    failure <- (1-pool)*total
+    success
+    failure
+    ```  
+    
+All conditions are met for hypothesis test based on the above result. 
+
+**First**, we can calculate the 95% condidence intervals for difference of two proportions between the two age groups
+```{r}
+inference(y = against_homo, x=age_group, data = sub_df, statistic = "proportion", type = "ci", method = "theoretical", success = "yes", alternative = "greater", boot_method = "se")
+```  
+
+We are 95% confident that the differnece of disapproval rate between older and younger generations is between 11.5% to 13.5%.
+
+
+**Second**, we will continue out hypothesis test to see if we reject or fail to reject the null hypothesis
+
+```{r}
+inference(y = against_homo, x=age_group, data = sub_df, statistic = "proportion", type = "ht", method = "theoretical", success = "yes", alternative = "greater")
+```
+From the above result, we have a **p-value** less than 0.0001. Therefore, we will reject the null hypothesis and conclude that older generations are more opposed to homosexual sex relation than younger generations.
